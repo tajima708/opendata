@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="css/leaflet.css">
+        <link rel="stylesheet" href="css/qgis2web.css"><link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <style>
+        #map {
+            width: 1000px;
+            height: 550px;
+        }
+        </style>
+        <title>北海道のオープンデータ取り組み自治体マップ</title>
+    </head>
+    <body>
+        <span style="background-color: #f30">北海道オープンデータポータル掲載自治体</span><br>
+        <span style="background-color: #06ff06">自治体ホームページ（または独自ポータルサイト）のみで公開している自治体</span><br>
+        地図をクリックすると、データの保存先のリンクが表示されます<br>
+        <div id="map">
+        </div>
+        <script src="js/qgis2web_expressions.js"></script>
+        <script src="js/leaflet.js"></script>
+        <script src="js/leaflet.rotatedMarker.js"></script>
+        <script src="js/leaflet.pattern.js"></script>
+        <script src="js/leaflet-hash.js"></script>
+        <script src="js/Autolinker.min.js"></script>
+        <script src="js/rbush.min.js"></script>
+        <script src="js/labelgun.min.js"></script>
+        <script src="js/labels.js"></script>
+        <script src="https://www.harp.lg.jp/opendata/dataset/169/resource/736/hokkaido_OD_map_EPSG4612.js"></script>
+        <script>
+            
+        //塗りつぶし色の指定
+        var color_portal = "#f30";
+        var color_hp = "#06ff06";
+        var color_select = "#e2ff00";
+        
+        //ハイライトの設定（マウスオーバー時に黄色にする）
+        var highlightLayer;
+        function highlightFeature(e) {
+            highlightLayer = e.target;
+
+            if (e.target.feature.geometry.type === 'LineString') {
+              highlightLayer.setStyle({
+                color: color_select,
+              });
+            } else {
+              highlightLayer.setStyle({
+                fillColor: color_select,
+                fillOpacity: 0.7
+              });
+            }
+        }
+        var map = L.map('map', {
+            zoomControl:true, maxZoom:28, minZoom:1
+        }).fitBounds([[41.403172933163525,139.5701467332964],[45.51478473301036,147.62023166343963]]);
+        
+        //表示するタイルレイヤのURLとAttributionコントロールの記述を設定して、地図に追加する
+        //地理院淡色地図
+        L.tileLayer('https://cyberjapandata.gsi.go.jp/xyz/pale/{z}/{x}/{y}.png', {
+            attribution: "<a href='https://maps.gsi.go.jp/development/ichiran.html' target='_blank'>地理院タイル</a>"
+        }).addTo(map);
+        
+        //setLegend();	//凡例
+        
+        var hash = new L.Hash(map);
+        map.attributionControl.setPrefix('kita_kou <a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="http://leafletjs.com" title="A JS library for interactive maps">Leaflet</a>');
+        var bounds_group = new L.featureGroup([]);
+        function setBounds() {
+        }
+
+        function pop_hokkaido_sityouson_1(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table width="300">\
+                    <tr>\
+                        <th scope="row">市町村名</th>\
+                        <td>' + (feature.properties['市町村名'] !== null ? Autolinker.link(String(feature.properties['市町村名'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">振興局</th>\
+                        <td>' + (feature.properties['振興局'] !== null ? Autolinker.link(String(feature.properties['振興局'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">自治体HP URL</th>\
+                        <td>' + (feature.properties['HP_URL'] !== null ? Autolinker.link(String(feature.properties['HP_URL'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">ODポータル URL</th>\
+                        <td>' + (feature.properties['PotalURL'] !== null ? Autolinker.link(String(feature.properties['PotalURL'])) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_hokkaido_sityouson_1_0(feature) {
+            switch(String(feature.properties['ポータル'])) {
+                case '0':
+                    switch(String(feature.properties['自身HP'])) {
+                        case '0':
+                            return {
+                        pane: 'pane_hokkaido_sityouson_1',
+                        opacity: 1,
+                        color: 'rgba(0,0,0,1.0)',
+                        dashArray: '',
+                        lineCap: 'butt',
+                        lineJoin: 'miter',
+                        weight: 1.0, 
+                        fill: true,
+                        fillOpacity: 0.2,
+                        fillColor: 'rgba(255,255,255,1.0)',
+                    }
+                            break;
+                        case '1':
+                            return {
+                        pane: 'pane_hokkaido_sityouson_1',
+                        opacity: 1,
+                        color: 'rgba(0,0,0,1.0)',
+                        dashArray: '',
+                        lineCap: 'butt',
+                        lineJoin: 'miter',
+                        weight: 1.0, 
+                        fill: true,
+                        fillOpacity: 0.5,
+                        fillColor: 'rgba(6,255,6,1.0)',
+                    }
+                            break;
+                    }
+                    break;
+                case '1':
+                    return {
+                pane: 'pane_hokkaido_sityouson_1',
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 0.5,
+                fillColor: 'rgba(251,6,6,1.0)',
+            }
+                    break;
+            }
+        }
+        /////凡例
+        /*function setLegend(){
+            legends = L.control({position: 'bottomright'});
+            legends.onAdd = function(){
+                var div = L.DomUtil.create('div', 'legend');
+                var labels = "";
+                //var m, n;
+
+                var labels ='<i style="background:'+ color_hp +'"></i> 各市町村サイトで公開<br>'
+                            +'<i style="background:'+ color_portal +'"></i> 道ポータルサイトで公開<br>'
+                div.innerHTML = labels;
+                return div;
+            };
+            legends.addTo(map);
+        }*/
+        map.createPane('pane_hokkaido_sityouson_1');
+        map.getPane('pane_hokkaido_sityouson_1').style.zIndex = 401;
+        map.getPane('pane_hokkaido_sityouson_1').style['mix-blend-mode'] = 'normal';
+        var layer_hokkaido_sityouson_1 = new L.geoJson(json_hokkaido_sityouson_1, {
+            attribution: '',
+            pane: 'pane_hokkaido_sityouson_1',
+            onEachFeature: pop_hokkaido_sityouson_1,
+            style: style_hokkaido_sityouson_1_0,
+        });
+        bounds_group.addLayer(layer_hokkaido_sityouson_1);
+        map.addLayer(layer_hokkaido_sityouson_1);
+        setBounds();
+
+        map.on("layeradd", function(){
+            resetLabels([layer_hokkaidosityouson_1]);
+        });
+        map.on("layerremove", function(){
+            resetLabels([layer_hokkaidosityouson_1]);
+        });
+        
+
+        </script>
+    </body>
+</html>
