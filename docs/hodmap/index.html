@@ -58,19 +58,24 @@
             }
         }
         var map = L.map('map', {
-            zoomControl:true, maxZoom:28, minZoom:1
+            zoomControl:true, maxZoom:11, minZoom:5
         }).fitBounds([[41.403172933163525,139.5701467332964],[45.51478473301036,147.62023166343963]]);
         
         //表示するタイルレイヤのURLとAttributionコントロールの記述を設定して、地図に追加する
         //地理院淡色地図
-        L.tileLayer('https://cyberjapandata.gsi.go.jp/xyz/pale/{z}/{x}/{y}.png', {
-            attribution: "<a href='https://maps.gsi.go.jp/development/ichiran.html' target='_blank'>地理院タイル</a>"
-        }).addTo(map);
+        //L.tileLayer('https://cyberjapandata.gsi.go.jp/xyz/pale/{z}/{x}/{y}.png', {
+        //    attribution: "<a href='https://maps.gsi.go.jp/development/ichiran.html' target='_blank'>地理院タイル</a>"
+        //}).addTo(map);
+            
+        //自作北海道マップ
+        L.tileLayer('tile/hokkaido/{z}/{x}/{y}.png', {
+            attribution: "kita_hokkaido"
+        }).addTo(map);        
         
         //setLegend();	//凡例
         
         var hash = new L.Hash(map);
-        map.attributionControl.setPrefix('kita_kou <a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="http://leafletjs.com" title="A JS library for interactive maps">Leaflet</a>');
+        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="http://leafletjs.com" title="A JS library for interactive maps">Leaflet</a>');
         var bounds_group = new L.featureGroup([]);
         function setBounds() {
         }
