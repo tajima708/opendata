@@ -92,7 +92,7 @@
         map.getPane('pane__4612_0').style['mix-blend-mode'] = 'normal';
         
         //geojsonファイルを読み込んでレイヤに表示
-        $.getJSON("data/test.geojson",function(json){
+        $.getJSON("https://koukita.github.io/opendata/hodmap/data/test.geojson",function(json){
             var layer__4612_0 = new L.geoJson(json, {
                 attribution: '',
                 pane: 'pane__4612_0',
