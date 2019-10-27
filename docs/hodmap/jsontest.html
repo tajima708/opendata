@@ -72,7 +72,57 @@
             layer.bindPopup(popupContent, {maxHeight: 400});
         }
 
-        function style__4612_0_0() {
+       function style_hokkaido_sityouson_1_0(feature) {
+            switch(String(feature.properties['ポータル'])) {
+                case '0':
+                    switch(String(feature.properties['自身HP'])) {
+                        case '0':
+                            return {
+                        pane: 'pane__4612_0',
+                        opacity: 1,
+                        color: 'rgba(0,0,0,1.0)',
+                        dashArray: '',
+                        lineCap: 'butt',
+                        lineJoin: 'miter',
+                        weight: 1.0, 
+                        fill: true,
+                        fillOpacity: 0.2,
+                        fillColor: 'rgba(255,255,255,1.0)',
+                    }
+                            break;
+                        case '1':
+                            return {
+                        pane: 'pane__4612_0',
+                        opacity: 1,
+                        color: 'rgba(0,0,0,1.0)',
+                        dashArray: '',
+                        lineCap: 'butt',
+                        lineJoin: 'miter',
+                        weight: 1.0, 
+                        fill: true,
+                        fillOpacity: 0.5,
+                        fillColor: 'rgba(6,255,6,1.0)',
+                    }
+                            break;
+                    }
+                    break;
+                case '1':
+                    return {
+                pane: 'pane__4612_0',
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 0.5,
+                fillColor: 'rgba(251,6,6,1.0)',
+            }
+                    break;
+            }
+        }
+/*            function style__4612_0_0() {
             return {
                 pane: 'pane__4612_0',
                 opacity: 1,
@@ -85,18 +135,18 @@
                 fillOpacity: 1,
                 fillColor: 'rgba(152,125,183,1.0)',
             }
-        }
+        }*/
         map.createPane('pane__4612_0');
         map.getPane('pane__4612_0').style.zIndex = 400;
         map.getPane('pane__4612_0').style['mix-blend-mode'] = 'normal';
         
         //geojsonファイルを読み込んでレイヤに表示
-        $.getJSON("https://koukita.github.io/opendata/hodmap/data/test.geojson",function(json){
+        $.getJSON("https://www.harp.lg.jp/opendata/dataset/169/resource/286/hokkaido_OD_map_EPSG4612.geojson",function(json){
             var layer__4612_0 = new L.geoJson(json, {
                 attribution: '',
                 pane: 'pane__4612_0',
                 onEachFeature: pop__4612_0,
-                style: style__4612_0_0,
+                style: style_hokkaido_sityouson_1_0,
             });
             bounds_group.addLayer(layer__4612_0);
             map.addLayer(layer__4612_0);
