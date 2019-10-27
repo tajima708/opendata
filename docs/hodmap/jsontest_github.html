@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="css/leaflet.css">
+        <link rel="stylesheet" href="css/qgis2web.css"><link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <style>
+        #map {
+            width: 1479px;
+            height: 767px;
+        }
+        </style>
+        <title></title>
+    </head>
+    <body>
+        <div id="map">
+        </div>
+        <script src="js/qgis2web_expressions.js"></script>
+        <script src="js/leaflet.js"></script>
+        <script src="js/leaflet.rotatedMarker.js"></script>
+        <script src="js/leaflet.pattern.js"></script>
+        <script src="js/leaflet-hash.js"></script>
+        <script src="js/Autolinker.min.js"></script>
+        <script src="js/rbush.min.js"></script>
+        <script src="js/labelgun.min.js"></script>
+        <script src="js/labels.js"></script>
+        <script src="js/jquery.min.js"></script> <!--$getJsonを実行するのに必要-->
+
+
+        <script>
+        var map = L.map('map', {
+            zoomControl:true, maxZoom:7, minZoom:1
+        }).fitBounds([[40.656830334619,137.34398065760345],[45.871429919487476,151.1829633720878]]);
+        var hash = new L.Hash(map);
+        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="http://leafletjs.com" title="A JS library for interactive maps">Leaflet</a>');
+        var bounds_group = new L.featureGroup([]);
+        function setBounds() {
+        }
+        function pop__4612_0(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">市町村名</th>\
+                        <td>' + (feature.properties['市町村名'] !== null ? Autolinker.link(String(feature.properties['市町村名'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['コード'] !== null ? Autolinker.link(String(feature.properties['コード'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['振興局'] !== null ? Autolinker.link(String(feature.properties['振興局'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['ポータル'] !== null ? Autolinker.link(String(feature.properties['ポータル'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">自身HP</th>\
+                        <td>' + (feature.properties['自身HP'] !== null ? Autolinker.link(String(feature.properties['自身HP'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['HP_URL'] !== null ? Autolinker.link(String(feature.properties['HP_URL'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['更新日'] !== null ? Autolinker.link(String(feature.properties['更新日'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['PotalURL'] !== null ? Autolinker.link(String(feature.properties['PotalURL'])) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+       function style_hokkaido_sityouson_1_0(feature) {
+            switch(String(feature.properties['ポータル'])) {
+                case '0':
+                    switch(String(feature.properties['自身HP'])) {
+                        case '0':
+                            return {
+                        pane: 'pane__4612_0',
+                        opacity: 1,
+                        color: 'rgba(0,0,0,1.0)',
+                        dashArray: '',
+                        lineCap: 'butt',
+                        lineJoin: 'miter',
+                        weight: 1.0, 
+                        fill: true,
+                        fillOpacity: 0.2,
+                        fillColor: 'rgba(255,255,255,1.0)',
+                    }
+                            break;
+                        case '1':
+                            return {
+                        pane: 'pane__4612_0',
+                        opacity: 1,
+                        color: 'rgba(0,0,0,1.0)',
+                        dashArray: '',
+                        lineCap: 'butt',
+                        lineJoin: 'miter',
+                        weight: 1.0, 
+                        fill: true,
+                        fillOpacity: 0.5,
+                        fillColor: 'rgba(6,255,6,1.0)',
+                    }
+                            break;
+                    }
+                    break;
+                case '1':
+                    return {
+                pane: 'pane__4612_0',
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 0.5,
+                fillColor: 'rgba(251,6,6,1.0)',
+            }
+                    break;
+            }
+        }
+/*            function style__4612_0_0() {
+            return {
+                pane: 'pane__4612_0',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(152,125,183,1.0)',
+            }
+        }*/
+        map.createPane('pane__4612_0');
+        map.getPane('pane__4612_0').style.zIndex = 400;
+        map.getPane('pane__4612_0').style['mix-blend-mode'] = 'normal';
+        
+        //geojsonファイルを読み込んでレイヤに表示
+        $.getJSON("https://koukita.github.io/opendata/hodmap/data/hokkaido_OD_map_EPSG4612.geojson",function(json){
+            var layer__4612_0 = new L.geoJson(json, {
+                attribution: '',
+                pane: 'pane__4612_0',
+                onEachFeature: pop__4612_0,
+                style: style_hokkaido_sityouson_1_0,
+            });
+            bounds_group.addLayer(layer__4612_0);
+            map.addLayer(layer__4612_0);
+            setBounds();
+        });
+
+        
+
+        
+        </script>
+    </body>
+</html>
