@@ -35,12 +35,31 @@
         <script src="js/labels.js"></script>
         <script src="https://www.harp.lg.jp/opendata/dataset/169/resource/736/hokkaido_OD_map_EPSG4612.js"></script>
         <script>
-            
+        function getCSV(){
+            var req = new XMLHttpRequest();
+            req.open("get","data/att_lg.csv",true);
+            req.send(null);
+
+            req.onload = function(){
+                convertCSVtoArray(req.responseText);
+            }
+        }
+        function convertCSVtoArray(str){
+            var result =[];
+            var tmp =str.split("\n");
+
+            for(var i=0;i<tmp.length;+;i){
+                result[i] = tmp[i].split(',');
+            }
+            alear(result[1][2]);
+        }
+        getCSV();
+
         //塗りつぶし色の指定
         var color_portal = "#f30";
         var color_hp = "#06ff06";
         var color_select = "#e2ff00";
-        
+
         //ハイライトの設定（マウスオーバー時に黄色にする）
         var highlightLayer;
         function highlightFeature(e) {
@@ -60,20 +79,20 @@
         var map = L.map('map', {
             zoomControl:true, maxZoom:11, minZoom:5
         }).fitBounds([[41.403172933163525,139.5701467332964],[45.51478473301036,147.62023166343963]]);
-        
+
         //表示するタイルレイヤのURLとAttributionコントロールの記述を設定して、地図に追加する
         //地理院淡色地図
         //L.tileLayer('https://cyberjapandata.gsi.go.jp/xyz/pale/{z}/{x}/{y}.png', {
         //    attribution: "<a href='https://maps.gsi.go.jp/development/ichiran.html' target='_blank'>地理院タイル</a>"
         //}).addTo(map);
-            
+
         //自作北海道マップ
         L.tileLayer('tile/hokkaido/{z}/{x}/{y}.png', {
             attribution: "kita_hokkaido"
-        }).addTo(map);        
-        
+        }).addTo(map);
+
         //setLegend();	//凡例
-        
+
         var hash = new L.Hash(map);
         map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="http://leafletjs.com" title="A JS library for interactive maps">Leaflet</a>');
         var bounds_group = new L.featureGroup([]);
@@ -122,7 +141,7 @@
                         dashArray: '',
                         lineCap: 'butt',
                         lineJoin: 'miter',
-                        weight: 1.0, 
+                        weight: 1.0,
                         fill: true,
                         fillOpacity: 0.2,
                         fillColor: 'rgba(255,255,255,1.0)',
@@ -136,7 +155,7 @@
                         dashArray: '',
                         lineCap: 'butt',
                         lineJoin: 'miter',
-                        weight: 1.0, 
+                        weight: 1.0,
                         fill: true,
                         fillOpacity: 0.5,
                         fillColor: 'rgba(6,255,6,1.0)',
@@ -152,7 +171,7 @@
                 dashArray: '',
                 lineCap: 'butt',
                 lineJoin: 'miter',
-                weight: 1.0, 
+                weight: 1.0,
                 fill: true,
                 fillOpacity: 0.5,
                 fillColor: 'rgba(251,6,6,1.0)',
@@ -194,7 +213,7 @@
         map.on("layerremove", function(){
             resetLabels([layer_hokkaidosityouson_1]);
         });
-        
+
 
         </script>
     </body>
