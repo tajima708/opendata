@@ -35,25 +35,60 @@
         <script src="js/labels.js"></script>
         <script src="https://www.harp.lg.jp/opendata/dataset/169/resource/736/hokkaido_OD_map_EPSG4612.js"></script>
         <script>
+        var color_array = { 'border_c':'#000000',    //black(境界線)
+                            'default_c':'#bbc8e6',    //淡藤色(デフォルト背景色)
+                            'no1':'#c53d43',    //赤紅(背景色１)
+                            'no2':'#38b48b',    //翡翠色(背景色２)
+                            'no3':'#eb6101',
+                            'no4':'#ff3300',    //portal
+                            'no5':'#06ff06',    //hp
+                            'select':'#e2ff00'
+        }
+        var csv_column_name = ['code','name','color','att1','att2','att3'];
+        var csv_data = {};
+
+
+
         function getCSV(){
             var req = new XMLHttpRequest();
             req.open("get","https://tajima708.github.io/opendata/hodmap/data/att_lg.csv",true);
+            req.overrideMimeType('text/html;charset=Shift_JIS');    //csvファイルはShift_JISを想定。
             req.send(null);
 
             req.onload = function(){
                 convertCSVtoArray(req.responseText);
             }
         }
+        //csvファイルのデータを連想配列csv_dataに変換。市町村コード（csvファイルの１列目）をキーに、csvファイルの２列目以降を値として持つ。（各列は、配列として保持）。
         function convertCSVtoArray(str){
             var result =[];
+            var tmp_key_code;
+            var tmp_value;
+            var tmp_key_name;
             var tmp =str.split("\n");
 
             for(var i=0;i<tmp.length;++i){
-                result[i] = tmp[i].split(',');
+                result = tmp[i].split(',');
+                tmp_key_code = result.shift();
+                csv_data[tmp_key_code] = result;
+                var tmp_arr = {};
+                for(var j=1; j<csv_column_name.length; ++j){
+                    tmp_key_name = csv_column_name[j];
+                    tmp_value = result.shift();
+                    tmp_arr[tmp_key_name] = tmp_value;
+//                    alert(tmp_key_code+','+tmp_key_name+','+tmp_value);
+                }
+                csv_data[tmp_key_code] = tmp_arr;
+//                tmp_value = result.shift();
+//                csv_data.tmp_key_code.color = tmp_value;
+//                csv_data.tmp_key_code.properties = result;
+//                alert(csv_data[tmp_key_code]["color"])
+
+                alert(tmp_key_code+' :: '+csv_data[tmp_key_code]['color']);
             }
-            alert(result[1][2]);
         }
         getCSV();
+
 
         //塗りつぶし色の指定
         var color_portal = "#f30";
@@ -67,11 +102,11 @@
 
             if (e.target.feature.geometry.type === 'LineString') {
               highlightLayer.setStyle({
-                color: color_select,
+                color: color_array.select,
               });
             } else {
               highlightLayer.setStyle({
-                fillColor: color_select,
+                fillColor: color_array.select,
                 fillOpacity: 0.7
               });
             }
@@ -129,6 +164,7 @@
             layer.bindPopup(popupContent, {maxHeight: 400});
         }
 
+/*
         function style_hokkaido_sityouson_1_0(feature) {
             switch(String(feature.properties['ポータル'])) {
                 case '0':
@@ -137,28 +173,28 @@
                             return {
                         pane: 'pane_hokkaido_sityouson_1',
                         opacity: 1,
-                        color: 'rgba(0,0,0,1.0)',
+                        color: color_array.aa,
                         dashArray: '',
                         lineCap: 'butt',
                         lineJoin: 'miter',
                         weight: 1.0,
                         fill: true,
                         fillOpacity: 0.2,
-                        fillColor: 'rgba(255,255,255,1.0)',
+                        fillColor: color_array.bb,
                     }
                             break;
                         case '1':
                             return {
                         pane: 'pane_hokkaido_sityouson_1',
                         opacity: 1,
-                        color: 'rgba(0,0,0,1.0)',
+                        color: color_array.aa,
                         dashArray: '',
                         lineCap: 'butt',
                         lineJoin: 'miter',
                         weight: 1.0,
                         fill: true,
                         fillOpacity: 0.5,
-                        fillColor: 'rgba(6,255,6,1.0)',
+                        fillColor: color_array.dd,
                     }
                             break;
                     }
@@ -167,18 +203,71 @@
                     return {
                 pane: 'pane_hokkaido_sityouson_1',
                 opacity: 1,
-                color: 'rgba(0,0,0,1.0)',
+                color: color_array.aa,
                 dashArray: '',
                 lineCap: 'butt',
                 lineJoin: 'miter',
                 weight: 1.0,
                 fill: true,
                 fillOpacity: 0.5,
-                fillColor: 'rgba(251,6,6,1.0)',
+                fillColor: color_array.cc,
+            }
+                    break;
+            }
+        }*/
+
+        function style_hokkaido_sityouson_1_0(feature) {
+            switch(String(feature.properties['ポータル'])) {
+                case '0':
+                    switch(String(feature.properties['自身HP'])) {
+                        case '0':
+                            return {
+                        pane: 'pane_hokkaido_sityouson_1',
+                        opacity: 1,
+                        color: color_array.border_c,
+                        dashArray: '',
+                        lineCap: 'butt',
+                        lineJoin: 'miter',
+                        weight: 1.0,
+                        fill: true,
+                        fillOpacity: 0.2,
+                        fillColor: color_array.default_c,
+                    }
+                            break;
+                        case '1':
+                            return {
+                        pane: 'pane_hokkaido_sityouson_1',
+                        opacity: 1,
+                        color: color_array.border_c,
+                        dashArray: '',
+                        lineCap: 'butt',
+                        lineJoin: 'miter',
+                        weight: 1.0,
+                        fill: true,
+                        fillOpacity: 0.5,
+                        fillColor: color_array.no2,
+                    }
+                            break;
+                    }
+                    break;
+                case '1':
+                    return {
+                pane: 'pane_hokkaido_sityouson_1',
+                opacity: 1,
+                color: color_array.border_c,
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 0.5,
+                fillColor: color_array.no1,
             }
                     break;
             }
         }
+
+
         /////凡例
         /*function setLegend(){
             legends = L.control({position: 'bottomright'});
